@@ -1,4 +1,8 @@
 #!/usr/bin/python3.14
+"""
+We moding some shit :DDDDDDD
+"""
+
 import os
 import sys
 import tkinter as tk
@@ -8,6 +12,10 @@ import polib
 
 
 class App(tk.Tk):
+    """
+    Idk, main class or sumthin, here is your docstring pylint
+    """
+
     def __init__(self):
         super().__init__()
         self.title("Wot Vehicle name changer")
@@ -26,15 +34,19 @@ class App(tk.Tk):
                 self.text_files.append(entry)
 
         print(self.text_files)
-        if self.text_files == []:
+        if not self.text_files:
             messagebox.showerror("Huh?", "Picked a wrong folder or canceled")
             sys.exit()
 
         self.option_var_nation = tk.StringVar(self)
         self.option_var_vehicle = tk.StringVar(self)
+        self.curr_list = None
         self.create_widgets()
 
     def create_widgets(self):
+        """
+        Load them widgets :)))
+        """
         self.nation_options = ttk.OptionMenu(
             self,
             self.option_var_nation,
@@ -63,21 +75,30 @@ class App(tk.Tk):
         ttk.Button(self, text="SAVE", width=10).pack()
 
     def populate_vehicles(self, *args):
+        """
+        you can read i think
+        """
         path = self.lcfolder + "/" + self.option_var_nation.get()
-        self.currlist = polib.mofile(path)
+        self.curr_list = polib.mofile(path)
         vehicles = []
-        for entry in self.currlist:
+        for entry in self.curr_list:
             if "_descr" in entry.msgid:
                 proper_id = entry.msgid.replace("_descr", "")
                 vehicles.append(proper_id)
         self.vehicle_options["values"] = vehicles
 
-    def load_tank_name(self, *args):
+    def load_tank_name(self):
+        """
+        all of this a for better pylint score, why do i care?
+        """
+        if self.curr_list is None:
+            messagebox.showwarning("Warning", "Please select a nation first")
+            return
         selected_vehicle = self.option_var_vehicle.get()
         if selected_vehicle:
             veh_name = None
             short_name = None
-            for entry in self.currlist:
+            for entry in self.curr_list:
                 if entry.msgid == f"{selected_vehicle}":
                     veh_name = entry.msgstr
                 elif entry.msgid == f"{selected_vehicle}_short":
