@@ -1,7 +1,6 @@
 #!/usr/bin/python3.14
 import os
 import tkinter as tk
-from pydoc import text
 from tkinter import filedialog, messagebox, ttk
 
 import polib
@@ -93,11 +92,6 @@ class App(tk.Tk):
             self.shortTankName.insert(0, str(short_name))
 
 
-# vehicleName = input("Write the name of the vehicle: ")
-
-# for entry in wottext:
-#    if vehicleName in entry.msgid:
-#        print(f'{entry.msgid}: "{entry.msgstr}"')
 if __name__ == "__main__":
     app = App()
     app.mainloop()
