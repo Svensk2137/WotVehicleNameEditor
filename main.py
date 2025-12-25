@@ -11,7 +11,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Wot Vehicle name changer")
-        self.geometry("500x300")
+        self.geometry("225x250")
 
         print("Ask for lc_messages folder")
         self.lcfolder = filedialog.askdirectory(
@@ -44,31 +44,53 @@ class App(tk.Tk):
         )
         self.nationOptions.pack()
 
-        self.vehicleOptions = ttk.OptionMenu(
-            self, self.optionVarVehicle, "", command=self.loadTankName
+        self.vehicleOptions = ttk.Combobox(
+            self,
+            textvariable=self.optionVarVehicle,
+            state="readonly",
         )
         self.vehicleOptions.pack()
+
+        ttk.Button(self, text="Load Info", command=self.loadTankName).pack()
 
         ttk.Label(self, text="Vehicle name").pack()
         self.tankName = ttk.Entry(self)
         self.tankName.pack()
+        ttk.Label(self, text="Vehicle short name").pack()
+        self.shortTankName = ttk.Entry(self)
+        self.shortTankName.pack()
+
+        ttk.Button(self, text="SAVE", width=10).pack()
 
     def populateVehicles(self, *args):
-        menu = self.vehicleOptions["menu"]
-        menu.delete(0, "end")
         path = self.lcfolder + "/" + self.optionVarNation.get()
         self.currlist = polib.mofile(path)
+        vehicles = []
         for entry in self.currlist:
             if "_descr" in entry.msgid:
                 properID = entry.msgid.replace("_descr", "")
-                menu.add_command(
-                    label=properID,
-                    command=lambda v=properID: self.optionVarVehicle.set(v),
-                )
+                vehicles.append(properID)
+        self.vehicleOptions["values"] = vehicles
 
     def loadTankName(self, *args):
-        print(self.currlist, self.optionVarVehicle.get())
-        pass
+        selected_vehicle = self.optionVarVehicle.get()
+        if selected_vehicle:
+            veh_name = None
+            short_name = None
+            for entry in self.currlist:
+                if entry.msgid == f"{selected_vehicle}":
+                    veh_name = entry.msgstr
+                elif entry.msgid == f"{selected_vehicle}_short":
+                    short_name = entry.msgstr
+                if veh_name and short_name:
+                    break
+            print(f"Vehicle: {selected_vehicle}")
+            print(f"Name: {veh_name}")
+            self.tankName.delete(0, tk.END)
+            self.tankName.insert(0, str(veh_name))
+            print(f"Short: {short_name}")
+            self.shortTankName.delete(0, tk.END)
+            self.shortTankName.insert(0, str(short_name))
 
 
 # vehicleName = input("Write the name of the vehicle: ")
