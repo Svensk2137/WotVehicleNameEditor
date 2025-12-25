@@ -1,2 +1,2 @@
-pydoc
+polib
 tkinter
