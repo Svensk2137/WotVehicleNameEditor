@@ -13,19 +13,10 @@ class App(tk.Tk):
         self.title("Wot Vehicle name changer")
         self.geometry("500x300")
 
-        self.excluded_strings = [
-            "Chassis_",
-            "Turret_",
-            "_descr",
-            "_long_special",
-            "_short",
-            "_short_special",
-        ]
-
         print("Ask for lc_messages folder")
         self.lcfolder = filedialog.askdirectory(
             title="Select lc_messages folder",
-            initialdir="/drives/Gaming/SteamLibrary/steamapps/common/World of Tanks/eu/res/text/",
+            initialdir="/drives/Gaming/SteamLibrary/steamapps/common/World of Tanks/eu/res/text/lc_messages",
         )
 
         print("Get *_vehicles.mo files")
@@ -40,6 +31,7 @@ class App(tk.Tk):
             exit()
 
         self.optionVarNation = tk.StringVar(self)
+        self.optionVarVehicle = tk.StringVar(self)
         self.create_widgets()
 
     def create_widgets(self):
@@ -52,7 +44,9 @@ class App(tk.Tk):
         )
         self.nationOptions.pack()
 
-        self.vehicleOptions = ttk.OptionMenu(self, self.optionVarNation, "")
+        self.vehicleOptions = ttk.OptionMenu(
+            self, self.optionVarVehicle, "", command=self.loadTankName
+        )
         self.vehicleOptions.pack()
 
         ttk.Label(self, text="Vehicle name").pack()
@@ -63,16 +57,18 @@ class App(tk.Tk):
         menu = self.vehicleOptions["menu"]
         menu.delete(0, "end")
         path = self.lcfolder + "/" + self.optionVarNation.get()
-        print(path)
-        list = polib.mofile(path)
-        vehicles = []
-        for entry in list:
-            if entry.msgid and not any(
-                excluded in entry.msgid for excluded in self.excluded_strings
-            ):
-                print(entry)
-                vehicles.append(entry.msgid)
-        print(vehicles)
+        self.currlist = polib.mofile(path)
+        for entry in self.currlist:
+            if "_descr" in entry.msgid:
+                properID = entry.msgid.replace("_descr", "")
+                menu.add_command(
+                    label=properID,
+                    command=lambda v=properID: self.optionVarVehicle.set(v),
+                )
+
+    def loadTankName(self, *args):
+        print(self.currlist, self.optionVarVehicle.get())
+        pass
 
 
 # vehicleName = input("Write the name of the vehicle: ")
