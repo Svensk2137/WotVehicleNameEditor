@@ -31,7 +31,15 @@ jobs:
     - name: Pyinstaller
       run: |
         pyinstaller --onefile --name "WotVNE" main.py
-    - name: Upload a Build Artifact
+    - name: Pyinstaller Windows
+      run: |
+        wine reg add "HKCU\Environment" /v PATH /t REG_EXPAND_SZ /d "C:\Python311;%PATH%" /f && wineboot --update
+        wine cmd /c "python -m PyInstaller --onefile --name \"WotVNE.exe\" my_app.py"
+    - name: Upload a Linux Build Artifact
       uses: actions/upload-artifact@v6.0.0
       with:
-        path: "/home/runner/work/WotVehicleNameEditor/WotVehicleNameEditor/dist/WotVNE"
+        path: dist/WotVNE
+    - name: Upload a Windows Build Artifact
+      uses: actions/upload-artifact@v6.0.0
+      with:
+        path: dist/WotVNE.exe
