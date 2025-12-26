@@ -8,7 +8,7 @@ Utility for editing vehicles names found in .mo files in World of Tanks
 1. Move `*_vehicles.mo` of the nation you want to edit from `res/text/lc_messages/`  to `res_mods/<current_version>/text/lc_messages/`
 
 # Running
-1. Choose folder `res_mods/2.1.0.2/text/lc_messages/`
+1. Choose folder `res_mods/<current_version>/text/lc_messages/`
 2. Select nation file
 3. Select vehicle
 4. Change name
