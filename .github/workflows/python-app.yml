@@ -16,7 +16,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: ubuntu-wine
 
     steps:
     - uses: actions/checkout@v4
