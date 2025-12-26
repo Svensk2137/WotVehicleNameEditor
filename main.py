@@ -25,19 +25,17 @@ class App(tk.Tk):
         print("Ask for lc_messages folder")
         self.lcfolder = filedialog.askdirectory(
             title="Select lc_messages folder",
-            initialdir="/drives/Gaming/SteamLibrary/steamapps/common/World of Tanks/eu/res_mods/2.1.0.2/text/lc_messages/",
         )
+        if not self.lcfolder:
+            messagebox.showerror("Huh?", "Picked a wrong folder or canceled")
+            sys.exit()
 
         print("Get *_vehicles.mo files")
         self.text_files = []
         for entry in os.listdir(self.lcfolder):
             if "_vehicles.mo" in entry:
                 self.text_files.append(entry)
-
         print(self.text_files)
-        if not self.text_files:
-            messagebox.showerror("Huh?", "Picked a wrong folder or canceled")
-            sys.exit()
 
         self.option_var_nation = tk.StringVar(self)
         self.option_var_vehicle = tk.StringVar(self)
