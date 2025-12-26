@@ -19,12 +19,13 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Wot Vehicle name changer")
-        self.geometry("225x250")
+        self.geometry("250x300")
+        self.resizable(False, False)
 
         print("Ask for lc_messages folder")
         self.lcfolder = filedialog.askdirectory(
             title="Select lc_messages folder",
-            initialdir="/drives/Gaming/SteamLibrary/steamapps/common/World of Tanks/eu/res/text/lc_messages",
+            initialdir="/drives/Gaming/SteamLibrary/steamapps/common/World of Tanks/eu/res_mods/2.1.0.2/text/lc_messages/",
         )
 
         print("Get *_vehicles.mo files")
@@ -72,7 +73,12 @@ class App(tk.Tk):
         self.short_tank_name = ttk.Entry(self)
         self.short_tank_name.pack()
 
-        ttk.Button(self, text="SAVE", width=10).pack()
+        ttk.Button(self, text="SAVE", width=10, command=self.save_changes).pack()
+
+        ttk.Label(
+            self,
+            text="If you dont want to modify oryginal\nfiles, copy the <nation>_vehicles.mo\nfile into\nres_mods/<version>/text/lc_messages/",
+        ).pack()
 
     def populate_vehicles(self, *args):
         """
@@ -112,6 +118,39 @@ class App(tk.Tk):
             print(f"Short: {short_name}")
             self.short_tank_name.delete(0, tk.END)
             self.short_tank_name.insert(0, str(short_name))
+
+    def save_changes(self):
+        """
+        Save changes to the selected vehicle's name and short name in the .mo file
+        """
+        if self.curr_list is None:
+            messagebox.showwarning("Bruh", "Select Nation")
+            return
+
+        selected_vehicle = self.option_var_vehicle.get()
+        if not selected_vehicle:
+            messagebox.showwarning("huh", "Select Vehicle")
+            return
+
+        new_name = self.tank_name.get()
+        new_short_name = self.short_tank_name.get()
+
+        found_name = False
+        found_short = False
+        for entry in self.curr_list:
+            if entry.msgid == selected_vehicle:
+                entry.msgstr = new_name
+                found_name = True
+            if entry.msgid == f"{selected_vehicle}_short":
+                entry.msgstr = new_short_name
+                found_short = True
+            if found_name and found_short:
+                break
+
+        file_path = self.lcfolder + "/" + self.option_var_nation.get()
+        self.curr_list.save(file_path)
+
+        messagebox.showinfo("Success", f"Updated '{selected_vehicle}' name")
 
 
 if __name__ == "__main__":
